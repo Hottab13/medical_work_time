@@ -59,7 +59,6 @@ const CalendarTable: React.FC<Props> = ({
     setStartDate(new Date(startDate.setDate(startDate.getDate() - 1)));
     setEndDate(new Date(endDate.setDate(endDate.getDate() - 1)));
   };
-  console.log(arr);
 
   /*const prefixDays = startDate.getDay();
   const suffixDays = 6 - endDate.getDay();
@@ -70,21 +69,26 @@ const CalendarTable: React.FC<Props> = ({
   return (
     <div className="container mx-auto mt-10">
       <div className="wrapper bg-white rounded shadow w-full ">
-      <button onClick={prevDay}>{"<"}</button>
-      {format(startDate, "LLLL-yyyy")}
-      <button onClick={nextDay}>{">"}</button>
-        <table className="border-collapse border border-slate-400">
+        <div className="flex justify-center pb-10">
+          <button onClick={prevDay}>{"<"}</button>
+          <div className="text-xl font-bold">
+            {format(startDate, "LLLL-yyyy")}
+          </div>
+          <button onClick={nextDay}>{">"}</button>
+        </div>
+
+        <table className=" border-collapse border border-slate-400">
           <thead>
             <tr>
               <th className="border border-slate-300">Время</th>
               {arr.map((day) => {
-                  console.log(day);
-                  return (
-                    <th key={day} className="border border-slate-300">
-                      {format(day, "d-EEEEEE")}
-                    </th>
-                  );
-                })}
+                console.log(day);
+                return (
+                  <th key={day} className="border border-slate-300">
+                    {format(day, "d-EEEEEE")}
+                  </th>
+                );
+              })}
             </tr>
           </thead>
 
@@ -94,16 +98,14 @@ const CalendarTable: React.FC<Props> = ({
                 <td className="border border-slate-300">{item}</td>
                 {Array.from([
                   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-                ]).map((_, index) => (
-                  <td key={index} className="border border-slate-300 ">
-                    <input className="w-11/12" type="text"></input>
-                  </td>
+                ]).map((_,) => (
+                 <td className="border border-slate-300"> <input type="checkbox" /></td>
                 ))}
               </tr>
             ))}
           </tbody>
         </table>
-        
+
         {/* 
           <div className="w-full grid grid-cols-7 items-center justify-center text-center">
             <Cell  onClick={prevYear}>{"<<"}</Cell>

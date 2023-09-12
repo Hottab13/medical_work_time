@@ -17,7 +17,7 @@ const App = () => {
   ) {
     arr.push(new Date(dt));
   }
-  useEffect(() => {
+  /*useEffect(() => {
      for (
       const dt = new Date(startDate);
       dt <= new Date(endDate);
@@ -25,7 +25,7 @@ const App = () => {
     ) {
       arr.push(new Date(dt));
     }
-  }, [arr, endDate, startDate]);
+  }, [arr, endDate, startDate]);*/
 
   return (
     <div className="bg-gray-200">
