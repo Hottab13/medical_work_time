@@ -1,18 +1,6 @@
 import moment from "moment";
 
-const CheckBoxCell = ({
-  value,
-  row: { index },
-  column: { id },
-  updateMyData,
-}) => {
-  const onChange = (e) => updateMyData(index, id, !value);
-  return (
-    <input name={id} type="checkbox" checked={value} onChange={onChange} />
-  );
-};
-
-const forDaysRange = (startDate, endDate) => {
+const forDaysRange = (startDate, endDate, cell, replace) => {
   const arr = [];
   arr.push({
     Header: "Время",
@@ -23,11 +11,19 @@ const forDaysRange = (startDate, endDate) => {
     dt <= new Date(endDate);
     dt.setDate(dt.getDate() + 1)
   ) {
-    arr.push({
-      Header: moment(dt).format("D MMMM YYYY").toString(),
-      accessor: moment(new Date(dt)).format("D MMMM YYYY"),
-      Cell: CheckBoxCell,
-    });
+    if (replace) {
+      arr.push({
+        Header: moment(dt).format("D MM").toString(),
+        accessor: moment(new Date(dt)).format("MMMM D YYYY").replace(/ /g, ""),
+        Cell: cell,
+      });
+    } else {
+      arr.push({
+        Header: moment(dt).format("D MM").toString(),
+        accessor: moment(new Date(dt)).format("MMMM D YYYY"),
+        Cell: cell,
+      });
+    }
   }
   return arr;
 };

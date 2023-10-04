@@ -2,13 +2,17 @@ import { format } from "date-fns";
 import { useState } from "react";
 
 import { CalendarTable } from "../components/CalendarTable";
+import { CheckBoxCell } from "../components/cell";
+import { useGetDoctorWorkingHoursQuery } from "../redux/doctorWorkingHoursApi";
 import { addDateDays, reduceDateDays } from "../util/dateDays";
 import { forDaysRange } from "../util/forDaysRange";
 
 const DoctorOffice = () => {
   const [startDate, setStartDate] = useState(reduceDateDays(new Date(), 1));
   const [endDate, setEndDate] = useState(addDateDays(new Date(), 12));
-  const columns = forDaysRange(startDate, endDate);
+  const { data = [], isLoading } = useGetDoctorWorkingHoursQuery();
+
+  const columns = forDaysRange(startDate, endDate, CheckBoxCell);
 
   const nextDay = () => {
     setStartDate && setStartDate(addDateDays(startDate, 1));
@@ -27,7 +31,7 @@ const DoctorOffice = () => {
         </div>
         <button onClick={nextDay}>{">"}</button>
       </div>
-      <CalendarTable columns={columns} />
+      <CalendarTable columns={columns} dataDays={data}/>
     </>
   );
 };
