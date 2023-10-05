@@ -1,6 +1,6 @@
 import moment from "moment";
 
-const forDaysRange = (startDate, endDate, cell, replace) => {
+const forDaysRange = (startDate, endDate, cell) => {
   const arr = [];
   arr.push({
     Header: "Время",
@@ -11,19 +11,11 @@ const forDaysRange = (startDate, endDate, cell, replace) => {
     dt <= new Date(endDate);
     dt.setDate(dt.getDate() + 1)
   ) {
-    if (replace) {
-      arr.push({
-        Header: moment(dt).format("D MM").toString(),
-        accessor: moment(new Date(dt)).format("MMMM D YYYY").replace(/ /g, ""),
-        Cell: cell,
-      });
-    } else {
-      arr.push({
-        Header: moment(dt).format("D MM").toString(),
-        accessor: moment(new Date(dt)).format("MMMM D YYYY"),
-        Cell: cell,
-      });
-    }
+    arr.push({
+      Header: moment(dt).format("D MM").toString(),
+      accessor: moment(new Date(dt)).format("MMMM D YYYY").replace(/ /g, ""),
+      Cell: cell,
+    });
   }
   return arr;
 };

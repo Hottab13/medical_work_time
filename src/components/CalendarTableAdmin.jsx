@@ -19,8 +19,9 @@ export const CalendarTableAdmin = ({ columns, scheduledDoctorTime }) => {
     const object = arrRow[elKey];
     object[elNameDate] = elName;
   });
-  console.log(arrRow)
   const data = useMemo(() => arrRow, []);
+
+  
   const [date, setDate] = useState([]);
 
   const updateMyData = (rowIndex, columnId, value) => {
