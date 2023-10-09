@@ -1,37 +1,57 @@
-import { format } from "date-fns";
+import moment from "moment";
 import { useState } from "react";
+import { GrFormNext, GrFormPrevious } from "react-icons/gr";
+import Select from "react-select";
 
 import { CalendarTable } from "../components/CalendarTable";
 import { CheckBoxCell } from "../components/cell";
 import { useGetDoctorWorkingHoursQuery } from "../redux/doctorWorkingHoursApi";
 import { addDateDays, reduceDateDays } from "../util/dateDays";
 import { forDaysRange } from "../util/forDaysRange";
+import { prevDay, nextDay } from "../util/pageDay";
+
+const options = [
+  { value: 0, label: "Григорий Фомин" },
+  { value: 1, label: "Борис Евкакиевич" },
+  { value: 2, label: "Раис Савкаевич" },
+];
 
 const DoctorOffice = () => {
+  const { data = [] } = useGetDoctorWorkingHoursQuery();
   const [startDate, setStartDate] = useState(reduceDateDays(new Date(), 1));
   const [endDate, setEndDate] = useState(addDateDays(new Date(), 12));
-  const { data = [], isLoading } = useGetDoctorWorkingHoursQuery();
-
+  const [selectedOptionDoctor, setSelectedOptionDoctor] = useState(options[0]);
   const columns = forDaysRange(startDate, endDate, CheckBoxCell);
-
-  const nextDay = () => {
-    setStartDate && setStartDate(addDateDays(startDate, 1));
-    setEndDate && setEndDate(addDateDays(endDate, 1));
-  };
-  const prevDay = () => {
-    setStartDate && setStartDate(reduceDateDays(startDate, 1));
-    setEndDate && setEndDate(reduceDateDays(endDate, 1));
-  };
   return (
     <>
-      <div className="flex justify-center pb-10">
-        <button onClick={prevDay}>{"<"}</button>
-        <div className="text-xl font-bold">
-          {format(startDate, "LLLL-yyyy")}
-        </div>
-        <button onClick={nextDay}>{">"}</button>
+      <div>
+        <Select
+          defaultValue={selectedOptionDoctor}
+          onChange={setSelectedOptionDoctor}
+          options={options}
+        />
       </div>
-      <CalendarTable columns={columns} dataDays={data}/>
+      <div className="flex justify-center pb-10">
+        <button
+          onClick={() => prevDay(startDate, endDate, setStartDate, setEndDate)}
+        >
+          {<GrFormPrevious />}
+        </button>
+        <div className="text-xl font-bold">
+          {moment(startDate).format("MMMM YYYY")}
+        </div>
+        <button
+          onClick={() => nextDay(startDate, endDate, setStartDate, setEndDate)}
+        >
+          {<GrFormNext />}
+        </button>
+      </div>
+      {data.length && (
+        <CalendarTable
+          columns={columns}
+          dataDays={data[selectedOptionDoctor.value]}
+        />
+      )}
     </>
   );
 };

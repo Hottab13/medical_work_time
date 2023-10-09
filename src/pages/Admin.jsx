@@ -1,28 +1,21 @@
 import { useState } from "react";
-import { CalendarTableAdmin } from "../components/CalendarTableAdmin";
-import { useGetDoctorWorkingHoursQuery } from "../redux/doctorWorkingHoursApi";
-import { addDateDays, reduceDateDays } from "../util/dateDays";
+import moment from "moment";
+import "moment/locale/ru";
 import tw from "tailwind-styled-components";
+import { GrFormNext, GrFormPrevious } from "react-icons/gr";
+
+import { useGetDoctorWorkingHoursQuery } from "../redux/doctorWorkingHoursApi";
+import { CalendarTableAdmin } from "../components/CalendarTableAdmin";
+import { SelectCell } from "../components/cell";
+import { addDateDays, reduceDateDays } from "../util/dateDays";
 import { forDaysRange } from "../util/forDaysRange";
-import { TextBoxCell } from "../components/cell";
-import { format } from "date-fns";
+import { prevDay, nextDay } from "../util/pageDay";
 
 const Admin = () => {
   const [startDate, setStartDate] = useState(reduceDateDays(new Date(), 1));
   const [endDate, setEndDate] = useState(addDateDays(new Date(), 12));
   const { data = [], isLoading } = useGetDoctorWorkingHoursQuery();
-
-  const columns = forDaysRange(startDate, endDate, TextBoxCell, true);
-
-  const nextDay = () => {
-    setStartDate && setStartDate(addDateDays(startDate, 1));
-    setEndDate && setEndDate(addDateDays(endDate, 1));
-  };
-
-  const prevDay = () => {
-    setStartDate && setStartDate(reduceDateDays(startDate, 1));
-    setEndDate && setEndDate(reduceDateDays(endDate, 1));
-  };
+  const columns = forDaysRange(startDate, endDate, SelectCell, true);
   const Container = tw.div`
     container 
     mx-auto 
@@ -38,10 +31,23 @@ const Admin = () => {
     <Container>
       <Wrapper>
         <div className="flex justify-center pb-10">
-          <h1>Привет Админ!</h1>
-          <button onClick={prevDay}>{"<"}</button>
-          <div className="text-xl font-bold">{format(startDate, "LLLL-yyyy")}</div>
-          <button onClick={nextDay}>{">"}</button>
+          <button
+            onClick={() =>
+              prevDay(startDate, endDate, setStartDate, setEndDate)
+            }
+          >
+            {<GrFormPrevious />}
+          </button>
+          <div className="text-xl font-bold">
+            {moment(startDate).format("MMMM YYYY")}
+          </div>
+          <button
+            onClick={() =>
+              nextDay(startDate, endDate, setStartDate, setEndDate)
+            }
+          >
+            {<GrFormNext />}
+          </button>
         </div>
         <CalendarTableAdmin
           columns={columns}

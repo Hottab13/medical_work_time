@@ -1,4 +1,5 @@
 import moment from "moment";
+import "moment/locale/ru";
 
 const forDaysRange = (startDate, endDate, cell) => {
   const arr = [];
@@ -12,8 +13,8 @@ const forDaysRange = (startDate, endDate, cell) => {
     dt.setDate(dt.getDate() + 1)
   ) {
     arr.push({
-      Header: moment(dt).format("D MM").toString(),
-      accessor: moment(new Date(dt)).format("MMMM D YYYY").replace(/ /g, ""),
+      Header: moment(dt).format("D dd").toString(),
+      accessor: moment(new Date(dt)).format("MMMM DD YYYY").replace(/ /g, ""),
       Cell: cell,
     });
   }

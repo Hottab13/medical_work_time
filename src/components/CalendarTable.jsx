@@ -1,9 +1,10 @@
-import React, { useCallback, useReducer, useState } from "react";
+import React, { useEffect, useState } from "react";
 import moment from "moment";
 
 import { useAddDoctorWorkingHoursMutation } from "../redux/doctorWorkingHoursApi";
 import { useArrRow } from "../hook/useArrRow";
 import { Table } from "./Table";
+import { tableGeneratorDoctor } from "../util/tableGenerator";
 
 const ButtonTableSend = ({ hendleAddWorkingHours }) => (
   <div>
@@ -20,42 +21,40 @@ const ButtonTableSend = ({ hendleAddWorkingHours }) => (
 export const CalendarTable = ({ columns, dataDays }) => {
   const arrRow = useArrRow();
 
-  dataDays.forEach((element) => {
-    const elKey = parseInt(moment(element.date).format("HH"));
-    const elNameDate = moment(element.date)
-      .format("MMMM D YYYY")
-      .replace(/ /g, "");
-    const object = arrRow[elKey];
-    object[elNameDate] = true;
-  });
+  const [tableData, setTableData] = useState(
+    tableGeneratorDoctor(dataDays, arrRow)
+  );
+  const [arrDate, setDate] = useState([]);
 
-  const [date, setDate] = useState();
+  useEffect(() => {
+    setTableData(tableGeneratorDoctor(dataDays, arrRow));
+  }, [dataDays]);
+
 
   const updateMyData = (rowIndex, columnId, value) => {
-    const myMomentObject = moment(columnId, "MMMM D YYYY").toDate();
+    const myMomentObject = moment(columnId, "MMMM DD YYYY").toDate();
     const myMomentDate = moment(myMomentObject)
       .add(moment.utc(rowIndex * 3600 * 1000).format("HH:mm"))
       .toDate();
     if (value) {
-      setDate(myMomentDate);
+      setDate([...arrDate, myMomentDate]);
     }
   };
-
-  const [addWorkingHours, { isError }] = useAddDoctorWorkingHoursMutation();
-  
+  const [addWorkingHours, { isLoading }] = useAddDoctorWorkingHoursMutation();
   const hendleAddWorkingHours = async () => {
-    await addWorkingHours({
-      name: "Григорий",
-      surname: "Фмилия",
-      date,
-    }).unwrap();
+    const payloyd = {
+      ...dataDays,
+      desiredTime: [...dataDays.desiredTime, ...arrDate],
+    };
+    await addWorkingHours(payloyd).unwrap();
+    //setTableData(tableGeneratorDoctor(dataDays, arrRow));
   };
 
   return (
     <div>
       <Table
         columns={columns}
-        data={arrRow}
+        data={tableData}
         updateMyData={updateMyData}
         hendleAddWorkingHours={hendleAddWorkingHours}
       />
