@@ -1,12 +1,8 @@
 import moment from "moment";
 import "moment/locale/ru";
 
-const elKey = (element) => {
-  return parseInt(moment(element).format("HH"));
-};
-const elNameDate = (element) => {
-  return moment(element).format("MMMM DD YYYY").replace(/ /g, "");
-};
+const elKey = element => parseInt(moment(element).format("HH"));
+const elNameDate = element => moment(element).format("MMMM DD YYYY").replace(/ /g, "");
 
 export const tableGeneratorDoctor = (doctor, arrRow) => {
   if (doctor.desiredTime?.length) {
@@ -17,9 +13,8 @@ export const tableGeneratorDoctor = (doctor, arrRow) => {
 
     doctor.approvedTime.forEach((element) => {
       const object = arrRow[elKey(element)];
-      object[elNameDate(element)] = true;
+      object[elNameDate(element)]="approved";
     });
-
   }
   return arrRow;
 };
@@ -34,6 +29,12 @@ export const tableGenerator = (data, arrRow) => {
       object[elNameDate(element)] = object[elNameDate(element)]
         ? [...object[elNameDate(element)], { value: elName, label: elName }]
         : [{ value: elName, label: elName }];
+    });
+
+    doctor.approvedTime.forEach((element) => {
+      const object = arrRow[elKey(element)];
+
+      object[elNameDate(element)] = elName;
     });
   });
   return arrRow;
