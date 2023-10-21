@@ -1,11 +1,11 @@
 import Select, { components } from "react-select";
 import { FcApproval } from "react-icons/fc";
 import { createRef } from "react";
-import moment from "moment";
+
 import {
-  useAddDoctorWorkingHoursMutation,
-  useGetDoctorWorkingHoursQuery,
+  useAddApprovedWorkHoursMutation,
 } from "../redux/doctorWorkingHoursApi";
+import { dateGenerator } from "../util/dateGenerator";
 
 const SelectCell = ({
   value,
@@ -24,35 +24,20 @@ const SelectCell = ({
       </components.MenuList>
     );
   };
-  const { data = [] } = useGetDoctorWorkingHoursQuery();
   const skuSelectRef = createRef();
-  const [addWorkingHours, { isSuccess }] = useAddDoctorWorkingHoursMutation();
-  const onAddToCartClick = async (e) => {
-    const myMomentObject = moment(id, "MMMM DD YYYY").toDate();
-    const myMomentDate = moment(myMomentObject)
-      .add(moment.utc(index * 3600 * 1000).format("HH:mm"))
-      .toDate();
-    const idDoctor = (charAt) => {
-      if ("ГФ" == charAt) {
-        return 0;
-      } else if ("БЕ" === charAt) {
-        return 1;
-      } else if ("РС" === charAt) {
-        return 2;
-      }
-    };
-    const payloyd = {
-      ...data[idDoctor(skuSelectRef.current.props.value.value)],
-      approvedTime: [
-        ...data[idDoctor(skuSelectRef.current.props.value.value)].approvedTime,
-        myMomentDate,
-      ],
-    };
-    await addWorkingHours(payloyd).unwrap();
-  };
+  const [addApprovedWH, { isSuccess }] = useAddApprovedWorkHoursMutation();
   if (isSuccess) {
     return alert("Сохранено, обновите страницу!");
   }
+  const onAddToCartClick = async (e) => {
+    const payloyd = {
+      date:dateGenerator(id, index),
+      doctorID:skuSelectRef.current.props.value.value
+  }
+  console.log(payloyd)
+    await addApprovedWH(payloyd).unwrap();
+  };
+ 
   const onChange = (e) => updateMyData(index, id, !value);
   if (typeof value === "string") {
     return (
@@ -95,7 +80,6 @@ const CheckBoxCell = ({
     <input
       name={id}
       type="checkbox"
-      //defaultChecked={value}
       disabled={value}
       onChange={onChange}
     />

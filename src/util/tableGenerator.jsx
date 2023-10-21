@@ -1,41 +1,40 @@
 import moment from "moment";
-import "moment/locale/ru";
 
-const elKey = element => parseInt(moment(element).format("HH"));
-const elNameDate = element => moment(element).format("MMMM DD YYYY").replace(/ /g, "");
-
-export const tableGeneratorDoctor = (doctor, arrRow) => {
-  if (doctor.desiredTime?.length) {
-    doctor.desiredTime.forEach((element) => {
-      const object = arrRow[elKey(element)];
-      object[elNameDate(element)] = true;
-    });
-
-    doctor.approvedTime.forEach((element) => {
-      const object = arrRow[elKey(element)];
-      object[elNameDate(element)]="approved";
-    });
-  }
+const elKey = (element) => parseInt(moment(element).format("HH"));
+const elNameDate = (element) =>
+  moment(element).format("MMMM DD YYYY").replace(/ /g, "");
+  
+const forDateDoctorTime = (workTime,arrRow,approved  )=>{
+  workTime.forEach((el) => {
+    const object = arrRow[elKey(el.date)];
+    object[elNameDate(el.date)] = approved;
+  });
+  return arrRow
+}
+const tableGeneratorDoctor = (doctor, arrRow) => {
+    forDateDoctorTime(doctor.desiredWorkTime,arrRow,true )
+    forDateDoctorTime(doctor.approvedWorkTime,arrRow,"approved" )
   return arrRow;
 };
 
-export const tableGenerator = (data, arrRow) => {
+const tableGenerator = (data, arrRow) => {
   data.forEach((doctor) => {
     const elName = `${doctor.name.charAt(0)}${
       doctor.surname ? doctor.surname.charAt(0) : ""
     }`;
-    doctor.desiredTime.forEach((element) => {
+    doctor.desiredWorkTime.forEach((el) => {
+      const element = el.date;
       const object = arrRow[elKey(element)];
       object[elNameDate(element)] = object[elNameDate(element)]
-        ? [...object[elNameDate(element)], { value: elName, label: elName }]
-        : [{ value: elName, label: elName }];
+        ? [...object[elNameDate(element)], { value: doctor.id, label: elName }]
+        : [{ value: doctor.id, label: elName }];
     });
-
-    doctor.approvedTime.forEach((element) => {
+    doctor.approvedWorkTime.forEach((el) => {
+      const element = el.date;
       const object = arrRow[elKey(element)];
-
       object[elNameDate(element)] = elName;
     });
   });
   return arrRow;
 };
+export { tableGeneratorDoctor, tableGenerator };

@@ -8,16 +8,29 @@ import {
 import { Layout } from "./components/Layout";
 import { Admin } from "./pages/Admin";
 import { DoctorOffice } from "./pages/DoctorOffice";
+import { Loginpage } from "./pages/Loginpage";
+import { RequireAuth } from "./hoc/RequireAuth";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
-      {/*<Route path="*" element={<Errorpage />} />
-      <Route index path="/" element={<Navigate to="events" replace />} />
-     
-  <Route path="event/:id" element={<EventProfilepage />} />*/}
-      <Route path="admin" element={<Admin />} />
-      <Route path="doctor_office" element={<DoctorOffice />} />
+      <Route path="login" element={<Loginpage />} />
+      <Route
+        path="admin"
+        element={
+          <RequireAuth>
+            <Admin />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="doctor"
+        element={
+          <RequireAuth>
+            <DoctorOffice />
+          </RequireAuth>
+        }
+      />
     </Route>
   )
 );
